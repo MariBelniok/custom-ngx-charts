@@ -1,0 +1,23 @@
+<div class="container">
+  <ngx-charts-pie-chart
+    [view]="view"
+    [scheme]="colorScheme"
+    [results]="single"
+    [gradient]="gradient"
+    (select)="onSelect($event)"
+    (activate)="onActivate($event)"
+    (deactivate)="onDeactivate($event)"
+  ></ngx-charts-pie-chart>
+  <div class="middle">
+    <div class="middle-circle">
+      <p>teste</p>
+    </div>
+  </div>
+</div>
+
+<div class="custom-legend">
+  <div *ngFor="let item of single" class="legend-item">
+    <div class="legend-color" [style.background]="getColor(item.name)"></div>
+    <span class="legend-label">{{ item.name }}</span>
+  </div>
+</div>
