@@ -7,9 +7,18 @@ import {
   Output,
   TemplateRef,
   TrackByFunction,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from '@angular/core';
-import { BarChartType, BaseChartComponent, ColorHelper, LegendOptions, LegendPosition, NgxChartsModule, ScaleType, Series, ViewDimensions, calculateViewDimensions } from '@swimlane/ngx-charts';
+import {
+  BarChartType,
+  BaseChartComponent,
+  ColorHelper,
+  NgxChartsModule,
+  ScaleType,
+  Series,
+  ViewDimensions,
+  calculateViewDimensions,
+} from '@swimlane/ngx-charts';
 import { scaleBand, scaleLinear } from 'd3-scale';
 
 @Component({
@@ -20,60 +29,42 @@ import { scaleBand, scaleLinear } from 'd3-scale';
       [showLegend]="false"
       [activeEntries]="activeEntries"
     >
-      <svg:g [attr.transform]="transform" class="bar-chart chart">
-        <svg:g>
-          <svg:g
-            *ngFor="let group of results; let index = index; trackBy: trackBy"
-            [attr.transform]="groupTransform(group)"
-          >
-            <svg:g
-              ngx-charts-series-horizontal
-              [type]="barChartType.Stacked"
-              [xScale]="xScale"
-              [yScale]="yScale"
-              [colors]="colors"
-              [series]="group.series"
-              [activeEntries]="activeEntries"
-              [dims]="dims"
-              [gradient]="gradient"
-              [tooltipDisabled]="tooltipDisabled"
-              [tooltipTemplate]="tooltipTemplate"
-              [animations]="animations"
-              [showDataLabel]="showDataLabel"
-              [dataLabelFormatting]="dataLabelFormatting"
-              [noBarWhenZero]="noBarWhenZero"
-            />
-          </svg:g>
-        </svg:g>
+      <svg:g
+        *ngFor="let group of results; let index = index; trackBy: trackBy;"
+        [attr.transform]="groupTransform(group)"
+      >
+        <svg:g
+          ngx-charts-series-horizontal
+          [type]="barChartType.Stacked"
+          [xScale]="xScale"
+          [yScale]="yScale"
+          [colors]="colors"
+          [series]="group.series"
+          [activeEntries]="activeEntries"
+          [dims]="dims"
+          [gradient]="gradient"
+          [tooltipDisabled]="tooltipDisabled"
+          [tooltipTemplate]="tooltipTemplate"
+          [animations]="animations"
+          [showDataLabel]="showDataLabel"
+          [dataLabelFormatting]="dataLabelFormatting"
+          [noBarWhenZero]="noBarWhenZero"
+        />
       </svg:g>
     </ngx-charts-chart>
   `,
+  styleUrls: ['./custom-one-bar-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [NgxChartsModule],
+  encapsulation: ViewEncapsulation.None,
 })
 export class HorizontalBarChartComponent extends BaseChartComponent {
   @Input() xAxis;
   @Input() yAxis;
-  @Input() xAxisLabel: string;
-  @Input() yAxisLabel: string;
   @Input() tooltipDisabled: boolean = false;
   @Input() gradient: boolean;
-  @Input() showGridLines: boolean = true;
   @Input() activeEntries: any[] = [];
-  @Input() override schemeType: ScaleType;
-  @Input() trimXAxisTicks: boolean = true;
-  @Input() trimYAxisTicks: boolean = true;
-  @Input() rotateXAxisTicks: boolean = true;
-  @Input() maxXAxisTickLength: number = 16;
-  @Input() maxYAxisTickLength: number = 16;
-  @Input() xAxisTickFormatting: any;
-  @Input() yAxisTickFormatting: any;
-  @Input() xAxisTicks: any[];
-  @Input() yAxisTicks: any[];
-  @Input() barPadding: number = 8;
-  @Input() roundDomains: boolean = false;
   @Input() xScaleMax: number;
   @Input() showDataLabel: boolean = false;
   @Input() dataLabelFormatting: any;
@@ -91,15 +82,10 @@ export class HorizontalBarChartComponent extends BaseChartComponent {
   valueDomain: [number, number];
   xScale: any;
   yScale: any;
-  transform: string;
   colors: ColorHelper;
   margin = [0, 0, 0, 0];
-  xAxisHeight: number = 0;
-  yAxisWidth: number = 0;
-  dataLabelMaxWidth: any = { negative: 0, positive: 0 };
 
   barChartType = BarChartType;
-  isSSR = false;
 
   override update(): void {
     super.update();
@@ -111,15 +97,12 @@ export class HorizontalBarChartComponent extends BaseChartComponent {
     });
 
     this.groupDomain = this.getGroupDomain();
-    this.innerDomain = this.getInnerDomain();
     this.valueDomain = this.getValueDomain();
 
     this.xScale = this.getXScale();
     this.yScale = this.getYScale();
 
     this.setColors();
-
-    this.transform = `translate(${this.dims.xOffset} , ${this.margin[0]})`;
   }
 
   getGroupDomain(): string[] {
@@ -128,20 +111,6 @@ export class HorizontalBarChartComponent extends BaseChartComponent {
     for (const group of this.results) {
       if (!domain.includes(group.label)) {
         domain.push(group.label);
-      }
-    }
-
-    return domain;
-  }
-
-  getInnerDomain(): string[] {
-    const domain = [];
-
-    for (const group of this.results) {
-      for (const d of group.series) {
-        if (!domain.includes(d.label)) {
-          domain.push(d.label);
-        }
       }
     }
 
@@ -171,26 +140,32 @@ export class HorizontalBarChartComponent extends BaseChartComponent {
     domain.push(biggest);
 
     const min = Math.min(0, ...domain);
-    const max = this.xScaleMax ? Math.max(this.xScaleMax, ...domain) : Math.max(...domain);
+    const max = this.xScaleMax
+      ? Math.max(this.xScaleMax, ...domain)
+      : Math.max(...domain);
     return [min, max];
   }
 
   getYScale(): any {
-    const spacing = this.groupDomain.length / (this.dims.height / this.barPadding + 1);
-
-    return scaleBand().rangeRound([0, this.dims.height]).paddingInner(spacing).domain(this.groupDomain);
+    return scaleBand()
+      .rangeRound([0, this.dims.height])
+      .paddingInner(0)
+      .domain(this.groupDomain);
   }
 
   getXScale(): any {
-    const scale = scaleLinear().range([0, this.dims.width]).domain(this.valueDomain);
-    return this.roundDomains ? scale.nice() : scale;
+    return scaleLinear()
+      .range([0, this.dims.width])
+      .domain(this.valueDomain);
   }
 
   groupTransform(group: Series): string {
     return `translate(0, ${this.yScale(group.name)})`;
   }
 
-
+  /**
+   * Angular ng for track by
+   */
   trackBy: TrackByFunction<Series> = (index: number, item: Series) => {
     return item.name;
   };
@@ -199,23 +174,10 @@ export class HorizontalBarChartComponent extends BaseChartComponent {
    * Set chart colors
    */
   setColors(): void {
-    let domain;
-    if (this.schemeType === ScaleType.Ordinal) {
-      domain = this.innerDomain;
-    } else {
-      domain = this.valueDomain;
-    }
-
-    this.colors = new ColorHelper(this.scheme, this.schemeType, domain, this.customColors);
-  }
-
-  updateYAxisWidth({ width }: { width: number }): void {
-    this.yAxisWidth = width;
-    this.update();
-  }
-
-  updateXAxisHeight({ height }: { height: number }): void {
-    this.xAxisHeight = height;
-    this.update();
+    this.colors = new ColorHelper(
+      this.scheme,
+      ScaleType.Ordinal,
+      this.valueDomain
+    );
   }
 }

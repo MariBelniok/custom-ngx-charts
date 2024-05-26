@@ -14,37 +14,29 @@ export class AppComponent {
   view: [number, number] = [300, 20];
 
   colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
-  } as any
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
+  } as any;
 
   single = [
     {
-      "series": [
+      series: [
         {
-          "name": "Compras",
-          "value": 10,
+          name: 'Compras',
+          value: 10,
         },
         {
-          "name": "Alimentação",
-          "value": 20,
+          name: 'Alimentação',
+          value: 20,
         },
         {
-          "name": "Saúde",
-          "value": 30,
+          name: 'Saúde',
+          value: 30,
         },
         {
-          "name": "Outras",
-          "value": 40,
-        }
-      ]
+          name: 'Outras',
+          value: 40,
+        },
+      ],
     },
-  ]
-
-
-  customColors = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
-  } as any
-
-  gradient = false;
-
+  ];
 }
